@@ -5,6 +5,17 @@
 		<title>Sweeper</title>
 	</head>
 	<body>
-		<h1>Hello, world!</h1>
+		<h1>Sweeper</h1>
+		<p>A shameless Minesweeper clone to practice Rust</p>
+
+		<form method="post" action="/new">
+			<label for="rows">Rows</label>
+			<input id="rows" type="number" min="5" max="50" />
+
+			<label for="columns">Columns</label>
+			<input id="columns" type="number" min="5" max="50" />
+
+			<button type="submit">Start Game</button>
+		</form>
 	</body>
 </html>
