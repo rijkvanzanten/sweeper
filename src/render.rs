@@ -5,6 +5,9 @@ use axum::{
 use minijinja::Environment;
 use serde::Serialize;
 
+// TODO: try refactoring this to return anyhow results instead of IntoResponse, and relying on
+// https://github.com/tokio-rs/axum/tree/main/examples/anyhow-error-response
+
 pub fn render<S>(
 	env: &Environment<'_>,
 	name: &str,

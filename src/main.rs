@@ -1,11 +1,13 @@
 mod render;
+mod routes;
 
-use axum::{extract::State, response::IntoResponse, routing::get, Router};
+use axum::{
+	routing::{get, post},
+	Router,
+};
 use minijinja::{path_loader, Environment};
 use std::sync::Arc;
 use tokio::net::TcpListener;
-
-use render::render;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -17,14 +19,11 @@ async fn main() -> anyhow::Result<()> {
 	minijinja_env.set_loader(path_loader("templates"));
 
 	let app = Router::new()
-		.route("/", get(root))
+		.route("/", get(routes::get_index))
+		.route("/new", post(routes::post_new))
 		.with_state(Arc::new(minijinja_env));
 
 	axum::serve(listener, app).await.unwrap();
 
 	Ok(())
-}
-
-async fn root(env: State<Arc<Environment<'static>>>) -> impl IntoResponse {
-	render(&env, "index.html", ())
 }
