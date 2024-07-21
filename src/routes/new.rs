@@ -14,7 +14,7 @@ pub struct GameInput {
 #[debug_handler]
 pub async fn post_new(State(games): State<GamesState>, Form(input): Form<GameInput>) -> Redirect {
 	let id = gen_id();
-	let route = "/".to_string() + &id.clone();
+	let route = "/game/".to_string() + &id.clone();
 
 	let new_game = Game::new(input.size, input.mines);
 

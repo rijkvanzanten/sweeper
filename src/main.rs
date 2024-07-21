@@ -20,6 +20,7 @@ async fn main() -> anyhow::Result<()> {
 	let app = Router::new()
 		.route("/", get(routes::get_index))
 		.route("/new", post(routes::post_new))
+      .route("/game/:game_id", get(routes::get_game))
 		.with_state(app_state);
 
 	axum::serve(listener, app).await.unwrap();
