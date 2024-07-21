@@ -1,12 +1,12 @@
-mod render;
+mod game;
 mod routes;
+mod state;
+mod utils;
 
 use axum::{
 	routing::{get, post},
 	Router,
 };
-use minijinja::{path_loader, Environment};
-use std::sync::Arc;
 use tokio::net::TcpListener;
 
 #[tokio::main]
@@ -15,13 +15,12 @@ async fn main() -> anyhow::Result<()> {
 	let listener = TcpListener::bind(&bind_address).await?;
 	println!("Listening on http://{}", bind_address);
 
-	let mut minijinja_env = Environment::new();
-	minijinja_env.set_loader(path_loader("templates"));
+	let app_state = state::AppState::new();
 
 	let app = Router::new()
 		.route("/", get(routes::get_index))
 		.route("/new", post(routes::post_new))
-		.with_state(Arc::new(minijinja_env));
+		.with_state(app_state);
 
 	axum::serve(listener, app).await.unwrap();
 

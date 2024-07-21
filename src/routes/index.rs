@@ -1,8 +1,7 @@
-use crate::render::render;
+use crate::state::MinijinjaState;
+use crate::utils::render;
 use axum::{extract::State, response::IntoResponse};
-use minijinja::Environment;
-use std::sync::Arc;
 
-pub async fn get_index(env: State<Arc<Environment<'static>>>) -> impl IntoResponse {
+pub async fn get_index(State(env): State<MinijinjaState>) -> impl IntoResponse {
 	render(&env, "index.html", ())
 }

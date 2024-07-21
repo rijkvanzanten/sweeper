@@ -3,6 +3,7 @@ use axum::{
 	response::{Html, IntoResponse},
 };
 use minijinja::Environment;
+use rand::{distributions::Alphanumeric, Rng};
 use serde::Serialize;
 
 // TODO: try refactoring this to return anyhow results instead of IntoResponse, and relying on
@@ -31,4 +32,12 @@ where
 	})?;
 
 	Ok(Html(rendered))
+}
+
+pub fn gen_id() -> String {
+	rand::thread_rng()
+		.sample_iter(&Alphanumeric)
+		.take(7)
+		.map(char::from)
+		.collect()
 }

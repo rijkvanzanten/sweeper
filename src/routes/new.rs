@@ -1,19 +1,24 @@
-use axum::{extract::Form, response::Redirect};
+use crate::game::Game;
+use crate::state::GamesState;
+use crate::utils::gen_id;
+use axum::{debug_handler, extract::Form, extract::State, response::Redirect};
 use serde::Deserialize;
 
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct GameInput {
-	rows: u8,
-	cols: u8,
+	size: u8,
+	mines: u16,
 }
 
-// TODO add input validation to make sure cols/rows are within range
+#[debug_handler]
+pub async fn post_new(State(games): State<GamesState>, Form(input): Form<GameInput>) -> Redirect {
+	let id = gen_id();
+	let route = "/".to_string() + &id.clone();
 
-// TODO: custom error handling for extract failure:
-// https://github.com/tokio-rs/axum/blob/main/examples/customize-extractor-error/src/main.rs
+	let new_game = Game::new(input.size, input.mines);
 
-pub async fn post_new(Form(input): Form<GameInput>) -> Redirect {
-	dbg!(input);
-	Redirect::to("/")
+	games.write().unwrap().insert(id, new_game);
+
+	Redirect::to(&route)
 }

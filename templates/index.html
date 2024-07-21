@@ -9,11 +9,11 @@
 		<p>A shameless Minesweeper clone to practice Rust</p>
 
 		<form method="post" action="/new">
-			<label for="rows">Rows</label>
-			<input id="rows" name="rows" type="number" min="5" max="50" value="10" />
+			<label for="size">Size</label>
+			<input id="size" name="size" type="number" min="1" max="255" value="10" />
 
-			<label for="cols">Columns</label>
-			<input id="cols" name="cols" type="number" min="5" max="50" value="10" />
+			<label for="mines">Columns</label>
+			<input id="mines" name="mines" type="number" min="1" max="65025" value="10" />
 
 			<button type="submit">Start Game</button>
 		</form>
