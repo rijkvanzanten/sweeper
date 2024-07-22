@@ -1,8 +1,9 @@
 use rand::Rng;
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct Game {
-	board: Vec<Vec<Cell>>,
+	board: Board,
 }
 
 impl Game {
@@ -12,13 +13,15 @@ impl Game {
 	}
 }
 
-#[derive(Debug)]
+pub type Board = Vec<Vec<Cell>>;
+
+#[derive(Serialize, Debug)]
 pub struct Cell {
 	state: CellState,
 	mine: bool,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub enum CellState {
 	Default,
 	Revealed(Option<u8>),

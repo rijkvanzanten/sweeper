@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Sweeper</title>
+	</head>
+	<body>
+		<h1>Sweeper</h1>
+		{% for row in ctx.board %}
+      <p>
+         {% for cell in row %}
+         <span>{% if cell.mine %}💣{% else %}⬜️{% endif %}</span>
+         {% endfor %}
+      </p>
+      {% endfor %}
+	</body>
+</html>

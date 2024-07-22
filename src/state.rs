@@ -1,7 +1,10 @@
 use crate::game::Game;
 use axum::extract::FromRef;
 use minijinja::{path_loader, Environment};
-use std::{collections::HashMap, sync::{Arc, RwLock}};
+use std::{
+	collections::HashMap,
+	sync::{Arc, RwLock},
+};
 
 #[derive(Clone)]
 pub struct AppState {
@@ -10,7 +13,7 @@ pub struct AppState {
 }
 
 impl AppState {
-	pub fn new() -> AppState {
+	pub fn new() -> Self {
 		let mut minijinja_env = Environment::new();
 		minijinja_env.set_loader(path_loader("templates"));
 
@@ -18,6 +21,20 @@ impl AppState {
 			minijinja_env: Arc::new(minijinja_env),
 			games: Arc::new(RwLock::new(HashMap::new())),
 		}
+	}
+
+	pub fn minijinja_env(&self) -> MinijinjaState {
+		self.minijinja_env.clone()
+	}
+
+	pub fn games(&self) -> GamesState {
+		self.games.clone()
+	}
+}
+
+impl Default for AppState {
+	fn default() -> Self {
+		Self::new()
 	}
 }
 

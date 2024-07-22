@@ -1,12 +1,29 @@
+use crate::state::AppState;
+use crate::utils::render;
 use axum::extract::{Path, State};
-use crate::state::GamesState;
+use axum::http::StatusCode;
+use axum::response::Html;
+use axum::response::IntoResponse;
 
-pub async fn get_game(State(games_state): State<GamesState>, Path(id): Path<String>) -> &'static str {
-   let games = games_state.read().unwrap();
+pub async fn get_game(
+	State(state): State<AppState>,
+	Path(id): Path<String>,
+) -> Result<Html<String>, impl IntoResponse> {
+	let games_state = state.games();
+	let games = games_state.read().unwrap();
 
-   let game = games.get(&id);
+	let Some(game) = games.get(&id) else {
+		return Err((StatusCode::NOT_FOUND, "Could not find game".to_owned()));
+	};
 
    dbg!(game);
 
-   "hello world"
+	let output = match render(&state.minijinja_env(), "game.jinja", game) {
+      Ok(output) => output,
+      Err(reason) => {
+         return Err((StatusCode::INTERNAL_SERVER_ERROR, reason));
+      }
+   };
+
+	Ok(Html(output))
 }
