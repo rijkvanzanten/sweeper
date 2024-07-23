@@ -1,6 +1,5 @@
 use crate::game::Game;
 use crate::state::GamesState;
-use crate::utils::gen_id;
 use axum::{debug_handler, extract::Form, extract::State, response::Redirect};
 use serde::Deserialize;
 
@@ -13,12 +12,11 @@ pub struct GameInput {
 
 #[debug_handler]
 pub async fn post_new(State(games): State<GamesState>, Form(input): Form<GameInput>) -> Redirect {
-	let id = gen_id();
-	let route = "/game/".to_string() + &id.clone();
-
 	let new_game = Game::new(input.size, input.mines);
+	let id = new_game.id();
 
-	games.write().unwrap().insert(id, new_game);
+	let route = "/game/".to_string() + id;
+	games.write().unwrap().insert(id.to_owned(), new_game);
 
 	Redirect::to(&route)
 }

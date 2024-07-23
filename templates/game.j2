@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Sweeper</title>
+      <link href="/assets/style.css" rel="stylesheet" />
+	</head>
+	<body>
+      <div class="board" style="--size: {{ ctx.size }}">
+         {% for row in ctx.board %}
+            {% set row_loop = loop %}
+            {% for cell in row %}
+               {% if 'Revealed' in cell.state %}
+               <div>
+                  {{ cell.state.Revealed }}
+               </div>
+               {% elsif 'Flagged' in cell.state %}
+               <div>
+                  🚩
+               </div>
+               {% else %}
+               <form method="post" action="/game/{{ ctx.id }}">
+                  <button class="cell" data-row="{{ row_loop.index0 }}" data-col="{{ loop.index0 }}">⬜</button>
+               </form>
+               {% endif %}
+            {% endfor %}
+         {% endfor %}
+      </div>
+	</body>
+</html>

@@ -16,14 +16,12 @@ pub async fn get_game(
 		return Err((StatusCode::NOT_FOUND, "Could not find game".to_owned()));
 	};
 
-   dbg!(game);
-
-	let output = match render(&state.minijinja_env(), "game.jinja", game) {
-      Ok(output) => output,
-      Err(reason) => {
-         return Err((StatusCode::INTERNAL_SERVER_ERROR, reason));
-      }
-   };
+	let output = match render(&state.minijinja_env(), "game.j2", game) {
+		Ok(output) => output,
+		Err(reason) => {
+			return Err((StatusCode::INTERNAL_SERVER_ERROR, reason));
+		}
+	};
 
 	Ok(Html(output))
 }

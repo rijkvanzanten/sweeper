@@ -1,15 +1,23 @@
+use crate::utils::gen_id;
 use rand::Rng;
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
 pub struct Game {
+	id: String,
+	size: u8,
 	board: Board,
 }
 
 impl Game {
 	pub fn new(size: u8, mines: u16) -> Game {
 		let board = create_board(size, mines);
-		Game { board }
+		let id = gen_id();
+		Game { id, size, board }
+	}
+
+	pub fn id(&self) -> &String {
+		&self.id
 	}
 }
 
@@ -24,8 +32,8 @@ pub struct Cell {
 #[derive(Serialize, Debug)]
 pub enum CellState {
 	Default,
-	Revealed(Option<u8>),
 	Flagged,
+	Revealed(Option<u8>),
 }
 
 fn create_board(size: u8, mines: u16) -> Vec<Vec<Cell>> {

@@ -8,6 +8,7 @@ use axum::{
 	Router,
 };
 use tokio::net::TcpListener;
+use tower_http::services::ServeDir;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -20,7 +21,8 @@ async fn main() -> anyhow::Result<()> {
 	let app = Router::new()
 		.route("/", get(routes::get_index))
 		.route("/new", post(routes::post_new))
-      .route("/game/:game_id", get(routes::get_game))
+		.route("/game/:game_id", get(routes::get_game))
+		.nest_service("/assets", ServeDir::new("assets"))
 		.with_state(app_state);
 
 	axum::serve(listener, app).await.unwrap();
