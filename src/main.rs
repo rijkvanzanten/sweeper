@@ -1,7 +1,7 @@
-mod game;
 mod routes;
 mod state;
 mod utils;
+mod game;
 
 use axum::{
 	routing::{get, post},

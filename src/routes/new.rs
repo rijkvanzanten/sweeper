@@ -6,13 +6,13 @@ use serde::Deserialize;
 #[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct GameInput {
-	size: u8,
-	mines: u16,
+	size: usize,
+	mines: usize,
 }
 
 #[debug_handler]
 pub async fn post_new(State(games): State<GamesState>, Form(input): Form<GameInput>) -> Redirect {
-	let new_game = Game::new(input.size, input.mines);
+	let new_game = Game::new(input.size, input.size, input.mines);
 	let id = new_game.id();
 
 	let route = "/game/".to_string() + id;

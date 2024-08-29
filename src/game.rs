@@ -1,70 +1,80 @@
-use crate::utils::gen_id;
 use rand::Rng;
-use serde::Serialize;
+use crate::utils::gen_id;
 
-#[derive(Serialize, Debug)]
+/// Holds the current game state and cells on the board. The cells are stored as a 1d vector to
+/// optimize performance, but can be indexed in a 2d fashion
+///
+/// ```
+/// let game = Game::new(100, 100);
+///
+/// for row of game {
+///   for cell of game {
+///     assert_eq!(cell.mine )
+///   }
+/// }
+/// ```
 pub struct Game {
-	id: String,
-	size: u8,
-	board: Board,
+   id: String,
+	width: usize,
+	cells: Vec<Cell>,
 }
 
 impl Game {
-	pub fn new(size: u8, mines: u16) -> Game {
-		let board = create_board(size, mines);
-		let id = gen_id();
-		Game { id, size, board }
+	pub fn new(width: usize, height: usize, mines: usize) -> Game {
+		let mut game = Game {
+         id: gen_id(),
+			width,
+			cells: vec![Cell::default(); width * height],
+		};
+
+		let mut mines_left = mines;
+
+		while mines_left > 0 {
+			let x: usize = rand::thread_rng().gen_range(0..width);
+			let y: usize = rand::thread_rng().gen_range(0..height);
+
+			let index = x + y * width;
+
+			let cell = &mut game.cells[index];
+
+			if !cell.mine {
+				cell.mine = true;
+				mines_left -= 1;
+			}
+		}
+
+		game
 	}
 
-	pub fn id(&self) -> &String {
-		&self.id
+	pub fn rows(&self) -> std::slice::Chunks<Cell> {
+		self.cells.chunks(self.width)
 	}
+
+   pub fn id(&self) -> &String {
+      &self.id
+   }
 }
 
-pub type Board = Vec<Vec<Cell>>;
-
-#[derive(Serialize, Debug)]
-pub struct Cell {
-	state: CellState,
+#[derive(Clone)]
+struct Cell {
 	mine: bool,
+	num_adjacent: u8,
+	state: CellState,
 }
 
-#[derive(Serialize, Debug)]
-pub enum CellState {
+impl Default for Cell {
+	fn default() -> Self {
+		Cell {
+			mine: false,
+			num_adjacent: 0,
+			state: CellState::Default,
+		}
+	}
+}
+
+#[derive(Clone)]
+enum CellState {
 	Default,
 	Flagged,
-	Revealed(Option<u8>),
-}
-
-fn create_board(size: u8, mines: u16) -> Vec<Vec<Cell>> {
-	let mut board: Vec<Vec<Cell>> = Vec::new();
-
-	for _ in 0..size {
-		let mut row: Vec<Cell> = Vec::new();
-
-		for _ in 0..size {
-			row.push(Cell {
-				state: CellState::Default,
-				mine: false,
-			});
-		}
-
-		board.push(row);
-	}
-
-	let mut mines_left = mines;
-
-	while mines_left > 0 {
-		let x: usize = rand::thread_rng().gen_range(0..size).into();
-		let y: usize = rand::thread_rng().gen_range(0..size).into();
-
-		let cell = &mut board[y][x];
-
-		if !cell.mine {
-			cell.mine = true;
-			mines_left -= 1;
-		}
-	}
-
-	board
+	Visible,
 }
