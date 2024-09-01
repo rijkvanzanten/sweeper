@@ -9,3 +9,6 @@ pub use game::get_game;
 
 mod flag;
 pub use flag::post_flag;
+
+mod reveal;
+pub use reveal::post_reveal;

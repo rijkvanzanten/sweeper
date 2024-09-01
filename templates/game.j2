@@ -10,9 +10,8 @@
          {% for row in rows %}
             {% set row_loop = loop %}
             {% for tile in row %}
-
                {% if 'Revealed' in tile.state %}
-               <button disabled>{{ tile.num_adjacent }}</button>
+               <form><button disabled>{% if tile.mine %}💣{% else %}{{ tile.num_adjacent }}{% endif %}</button></form>
                {% elif 'Flagged' in tile.state %}
                <form method="post" action="/game/{{ game_id }}/flag">
                   <input type="hidden" name="row" value="{{ row_loop.index0 }}" />

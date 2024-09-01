@@ -1,7 +1,7 @@
+mod game;
 mod routes;
 mod state;
 mod utils;
-mod game;
 
 use axum::{
 	routing::{get, post},
@@ -22,7 +22,8 @@ async fn main() -> anyhow::Result<()> {
 		.route("/", get(routes::get_index))
 		.route("/new", post(routes::post_new))
 		.route("/game/:game_id", get(routes::get_game))
-      .route("/game/:game_id/flag", post(routes::post_flag))
+		.route("/game/:game_id/flag", post(routes::post_flag))
+		.route("/game/:game_id/reveal", post(routes::post_reveal))
 		.nest_service("/assets", ServeDir::new("assets"))
 		.with_state(app_state);
 

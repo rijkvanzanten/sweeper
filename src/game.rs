@@ -27,9 +27,9 @@ impl Board {
 				tile.mine = true;
 				mines_left -= 1;
 
-				board.adjacent(row, col, |tile| {
-					tile.num_adjacent += 1;
-				});
+				for (adjacent_row, adjacent_col) in board.adjacent(row, col) {
+					board[adjacent_row][adjacent_col].num_adjacent += 1;
+				}
 			}
 		}
 
@@ -54,14 +54,35 @@ impl Board {
 		}
 	}
 
+	pub fn reveal(&mut self, row: usize, col: usize) {
+		let tile = &mut self[row][col];
+
+		if tile.mine {
+			self.game_over()
+		} else if let TileState::Default = tile.state {
+			tile.state = TileState::Revealed;
+
+			if tile.num_adjacent == 0 {
+				for (adjacent_row, adjacent_col) in self.adjacent(row, col) {
+					self.reveal(adjacent_row, adjacent_col);
+				}
+			}
+		}
+	}
+
+	fn game_over(&mut self) {
+		for tile in self.tiles.iter_mut() {
+			tile.state = TileState::Revealed;
+		}
+	}
+
 	pub fn width(&self) -> usize {
 		self.width
 	}
 
-	fn adjacent<C>(&mut self, row: usize, col: usize, callback: C)
-	where
-		C: Fn(&mut Tile),
-	{
+	fn adjacent(&mut self, row: usize, col: usize) -> Vec<(usize, usize)> {
+		let mut coords: Vec<(usize, usize)> = vec![];
+
 		let cols = self.width;
 		let rows = self.tiles.len() / self.width;
 
@@ -71,36 +92,38 @@ impl Board {
 		let left_exists = col > 0;
 
 		if top_exists {
-			callback(&mut self[row - 1][col]);
+			coords.push((row - 1, col));
 
 			if left_exists {
-				callback(&mut self[row - 1][col - 1]);
+				coords.push((row - 1, col - 1));
 			}
 
 			if right_exists {
-				callback(&mut self[row - 1][col + 1])
+				coords.push((row - 1, col + 1));
 			}
 		}
 
 		if left_exists {
-			callback(&mut self[row][col - 1]);
+			coords.push((row, col - 1));
 		}
 
 		if right_exists {
-			callback(&mut self[row][col + 1])
+			coords.push((row, col + 1));
 		}
 
 		if bottom_exists {
-			callback(&mut self[row + 1][col]);
+			coords.push((row + 1, col));
 
 			if left_exists {
-				callback(&mut self[row + 1][col - 1]);
+				coords.push((row + 1, col - 1));
 			}
 
 			if right_exists {
-				callback(&mut self[row + 1][col + 1])
+				coords.push((row + 1, col + 1));
 			}
 		}
+
+		coords
 	}
 }
 
