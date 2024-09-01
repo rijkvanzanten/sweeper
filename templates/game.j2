@@ -7,7 +7,7 @@
 	</head>
 	<body>
       <div class="board" style="--size: {{ ctx.size }}">
-         {% for row in ctx.board %}
+         {% for row in ctx.rows() %}
             {% set row_loop = loop %}
             {% for cell in row %}
                {% if 'Revealed' in cell.state %}

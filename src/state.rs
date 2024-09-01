@@ -1,4 +1,4 @@
-use crate::game::Game;
+use crate::game::Board;
 use axum::extract::FromRef;
 use minijinja::{path_loader, Environment};
 use std::{
@@ -46,7 +46,7 @@ impl FromRef<AppState> for MinijinjaState {
 	}
 }
 
-pub type GamesState = Arc<RwLock<HashMap<String, Game>>>;
+pub type GamesState = Arc<RwLock<HashMap<String, Board>>>;
 
 impl FromRef<AppState> for GamesState {
 	fn from_ref(app_state: &AppState) -> GamesState {
