@@ -6,3 +6,6 @@ pub use new::post_new;
 
 mod game;
 pub use game::get_game;
+
+mod flag;
+pub use flag::post_flag;

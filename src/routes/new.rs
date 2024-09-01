@@ -1,19 +1,18 @@
 use crate::game::Board;
 use crate::state::GamesState;
-use axum::{debug_handler, extract::Form, extract::State, response::Redirect};
-use serde::Deserialize;
 use crate::utils::gen_id;
+use axum::{extract::Form, extract::State, response::Redirect};
+use serde::Deserialize;
 
-#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct GameInput {
-	size: usize,
+	width: usize,
+	height: usize,
 	mines: usize,
 }
 
-#[debug_handler]
 pub async fn post_new(State(games): State<GamesState>, Form(input): Form<GameInput>) -> Redirect {
-	let new_game = Board::new(input.size, input.size, input.mines);
+	let new_game = Board::new(input.width, input.height, input.mines);
 	let id = gen_id();
 
 	let route = "/game/".to_string() + &id;

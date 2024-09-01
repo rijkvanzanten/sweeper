@@ -18,8 +18,8 @@ impl Board {
 		let mut mines_left = mines;
 
 		while mines_left > 0 {
-			let col: usize = rand::thread_rng().gen_range(0..width);
 			let row: usize = rand::thread_rng().gen_range(0..height);
+			let col: usize = rand::thread_rng().gen_range(0..width);
 
 			let tile = &mut board[row][col];
 
@@ -36,8 +36,26 @@ impl Board {
 		board
 	}
 
-	pub fn flag(&mut self, row: usize, col: usize) {
-		self[row][col].state = TileState::Flagged;
+	pub fn rows(&self) -> Vec<Vec<Tile>> {
+		self.tiles
+			.chunks(self.width)
+			.map(|chunk| chunk.to_vec())
+			.collect::<Vec<Vec<Tile>>>()
+	}
+
+	/// Silently ignores attempts at flagging revealed tiles
+	pub fn toggle_flag(&mut self, row: usize, col: usize) {
+		let tile = &mut self[row][col];
+
+		if let TileState::Flagged = tile.state {
+			tile.state = TileState::Default;
+		} else if let TileState::Default = tile.state {
+			tile.state = TileState::Flagged;
+		}
+	}
+
+	pub fn width(&self) -> usize {
+		self.width
 	}
 
 	fn adjacent<C>(&mut self, row: usize, col: usize, callback: C)
@@ -48,8 +66,8 @@ impl Board {
 		let rows = self.tiles.len() / self.width;
 
 		let top_exists = row > 0;
-		let right_exists = col < cols;
-		let bottom_exists = row < rows;
+		let right_exists = col < cols - 1;
+		let bottom_exists = row < rows - 1;
 		let left_exists = col > 0;
 
 		if top_exists {
@@ -122,5 +140,5 @@ impl Default for Tile {
 pub enum TileState {
 	Default,
 	Flagged,
-	Visible,
+	Revealed,
 }

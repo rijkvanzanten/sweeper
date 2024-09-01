@@ -6,23 +6,28 @@
       <link href="/assets/style.css" rel="stylesheet" />
 	</head>
 	<body>
-      <div class="board" style="--size: {{ ctx.size }}">
-         {% for row in ctx.rows() %}
+      <div class="board" style="--width: {{ width }}">
+         {% for row in rows %}
             {% set row_loop = loop %}
-            {% for cell in row %}
-               {% if 'Revealed' in cell.state %}
-               <div>
-                  {{ cell.state.Revealed }}
-               </div>
-               {% elsif 'Flagged' in cell.state %}
-               <div>
-                  🚩
-               </div>
+            {% for tile in row %}
+
+               {% if 'Revealed' in tile.state %}
+               <button disabled>{{ tile.num_adjacent }}</button>
+               {% elif 'Flagged' in tile.state %}
+               <form method="post" action="/game/{{ game_id }}/flag">
+                  <input type="hidden" name="row" value="{{ row_loop.index0 }}" />
+                  <input type="hidden" name="col" value="{{ loop.index0 }}" />
+                  <button type="submit">🚩</button>
+               </form>
                {% else %}
-               <form method="post" action="/game/{{ ctx.id }}">
-                  <button class="cell" data-row="{{ row_loop.index0 }}" data-col="{{ loop.index0 }}">⬜</button>
+               <form method="post" action="/game/{{ game_id }}/reveal">
+                  <input type="hidden" name="row" value="{{ row_loop.index0 }}" />
+                  <input type="hidden" name="col" value="{{ loop.index0 }}" />
+                  <button type="submit">R</button>
+                  <button type="submit" formaction="/game/{{ game_id }}/flag">F</button>
                </form>
                {% endif %}
+
             {% endfor %}
          {% endfor %}
       </div>

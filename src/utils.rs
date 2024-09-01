@@ -1,16 +1,9 @@
-use minijinja::{Environment, context};
+use minijinja::{Environment, Value};
 use rand::{distributions::Alphanumeric, Rng};
-use serde::Serialize;
 
-pub fn render<S>(env: &Environment<'_>, name: &str, ctx: S) -> Result<String, String>
-where
-	S: Serialize,
-{
-	let Ok(template) = env.get_template(name) else {
-		return Err(format!("Template {} not found", name));
-	};
-
-	let rendered = template.render(context!{ ctx }).map_err(|err| format!("{}", err))?;
+pub fn render(env: &Environment<'_>, name: &str, ctx: Value) -> Result<String, String> {
+	let template = env.get_template(name).map_err(|err| format!("{}", err))?;
+	let rendered = template.render(ctx).map_err(|err| format!("{}", err))?;
 
 	Ok(rendered)
 }
